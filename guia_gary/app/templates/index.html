@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregar">
+      Agregar
+  </button>
+  <div class="modal fade" id="agregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <form action="{% url 'agregar' %}" method="POST">
+              {% csrf_token %}
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="staticBackdropLabel">Agregar</h5>
+                  </div>
+                  <div class="modal-body">
+                      <div class="mb-3">
+                          <label for="modelo" class="form-label">Modelo</label>
+                          <input type="text" class="form-control" id="modelo" name="modelo">
+                      </div>
+                      <div class="mb-3">
+                          <label for="sistema" class="form-label">Sistema</label>
+                          <select  class="form-select form-select-lg" id="sistema" name="sistema">
+                              {% for sistema in sistemas %}
+                                  <option value="{{sistema.id}}">{{sistema.nombre}}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Guardar</button>
+                  </div>
+              </div>
+          </form>
+      </div>
+  </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#ID</th>
+          <th scope="col">Modelo</th>
+          <th scope="col">Sistema</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for smartphone in smartphones %}
+        <tr>
+          <th scope="row">{{smartphone.id}}</th>
+          <td>{{smartphone.modelo}}</td>
+          <td>{{smartphone.sistema.nombre}}</td>
+          <td>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editar-{{foorloop.counter}}" >
+              Editar
+            </button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminar_{{foorloop.counter}}">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% for smartphone   in smartphones %}
+    <div class="modal fade" id="editar-{{foorloop.counter}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <form action="{% url 'editar' smartphone.id %}" method="POST">
+              {% csrf_token %}
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Editar #id {{smartphone.id}}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="mb-3">
+                          <label for="modelo" class="form-label">Modelo</label>
+                          <input type="text" class="form-control" id="modelo" name="modelo" value="{{smartphone.modelo}}">
+                      </div>
+                      <div class="mb-3">
+                          <label for="sistema" class="form-label">Sistema</label>
+                          <select  class="form-select form-select-lg" id="sistema" name="sistema">
+                              {% for sistema in sistemas %}
+                                  {%  if sistema.id == smartphone.sistema.id %}
+                                      <option value="{{sistema.id}}" selected> {{sistema.nombre}}</option>
+                                  {%  else %}
+                                      <option value="{{sistema.id}}" > {{sistema.nombre}}</option>
+                                  {% endif %}
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Guardar</button>
+                  </div>
+              </div>
+          </form>
+      </div>
+  </div>
+  <div class="modal fade" id="eliminar_{{foorloop.counter}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{% url 'eliminar' smartphone.id %}" method="POST">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Editar #id {{smartphone.id}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  ¿Estas seguro de borrar el smartphone {{smartphone.modelo}} de la base de datos?
+
+                </div>
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+  {% endfor %}
+  
+
+
+
+  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+  </body>
+</html>
